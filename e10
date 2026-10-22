@@ -1,0 +1,77 @@
+NS-3 Experiment 10
+Complete Steps, Commands & Output Guide
+This guide follows the workflow completed on Ubuntu 22.04 with ns-3.29. It is organized as Part A, Part B and Part C so
+the commands and screenshots can be used for the practical record.
+1. Enter the ns-3.29 directory
+cd ~/aryanp/ns-allinone-3.29/ns-3.29
+pwd
+Expected directory:
+/home/computer/aryanp/ns-allinone-3.29/ns-3.29
+2. Part A — LAN simulation
+Create/open the experiment file:
+nano scratch/exp10-lan.cc
+Save the C++ program in this file. The completed run shown in the practical produced three nodes with IP addresses
+10.1.1.1, 10.1.1.2 and 10.1.1.3.
+Build and run:
+./waf --run scratch/exp10-lan
+Part A output to capture:
+Node 0 IP Address: 10.1.1.1
+Node 1 IP Address: 10.1.1.2
+Node 2 IP Address: 10.1.1.3
+3. Part B — Routing table
+Display the current routing table:
+ip route
+route -n
+Add the 10.10.10.0/24 route:
+sudo ip route add 10.10.10.0/24 via 192.168.210.253
+ip route
+Delete the route:
+sudo ip route del 10.10.10.0/24
+ip route
+Replace/set the default route:
+sudo ip route replace default via 192.168.210.253 dev enp2s0
+ip route
+Part B output to capture:
+Capture the routing-table output showing the route addition, verification, deletion, and final routing table.
+
+4. Part C — IP forwarding and iptables
+Enable IPv4 forwarding:
+sudo sysctl -w net.ipv4.ip_forward=1
+Verify it:
+cat /proc/sys/net/ipv4/ip_forward
+Expected result:
+1
+Display the firewall rules:
+sudo iptables -L -n -v
+Add a DROP rule for TCP port 8080:
+sudo iptables -A INPUT -p tcp --dport 8080 -j DROP
+Verify the DROP rule:
+sudo iptables -L INPUT -n -v
+The output should contain a rule similar to: DROP tcp -- * * 0.0.0.0/0 0.0.0.0/0 tcp dpt:8080
+Remove the DROP rule after the demonstration:
+sudo iptables -D INPUT -p tcp --dport 8080 -j DROP
+Verify removal:
+sudo iptables -L INPUT -n -v
+5. What screenshots to put in the record
+PART A
+1. ./waf --run scratch/exp10-lan
+2. Output showing:
+Node 0 IP Address: 10.1.1.1
+Node 1 IP Address: 10.1.1.2
+Node 2 IP Address: 10.1.1.3
+PART B
+1. ip route / route -n
+2. Route addition + verification
+3. Route deletion / final routing table
+PART C
+1. cat /proc/sys/net/ipv4/ip_forward
+Output: 1
+2. sudo iptables -L -n -v
+3. DROP rule for TCP port 8080
+4. Final iptables output after deleting the DROP rule
+6. Important notes
+Run the commands from the ns-3.29 directory. If ./waf is not found, check the current directory with pwd and locate waf
+with: find ~/aryanp/ns-allinone-3.29 -name waf. Do not type the prompt text such as computer@computer-ThinkCentre:~$;
+type only the command after the $.
+For the practical record, use the actual terminal screenshots you already captured for Parts A, B and C rather than
+recreating outputs manually.
