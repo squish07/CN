@@ -1,0 +1,47 @@
+Device	Switch port
+PC0	Fa0/1
+PC1	Fa0/2
+PC2	Fa0/3
+PC3	Fa0/4
+Router G0/0	Switch G0/1
+
+PC	IP address	Gateway
+PC0	192.168.10.2	192.168.10.1
+PC1	192.168.10.3	192.168.10.1
+PC2	192.168.20.2	192.168.20.1
+PC3	192.168.20.3	192.168.20.1
+Subnet mask for all: 255.255.255.0
+
+enable
+configure terminal
+vlan 10
+name Sales
+exit
+vlan 20
+name HR
+exit
+interface range fa0/1-2
+switchport mode access
+switchport access vlan 10
+exit
+interface range fa0/3-4
+switchport mode access
+switchport access vlan 20
+exit
+interface gigabitEthernet0/1
+switchport mode trunk
+end
+
+enable
+configure terminal
+interface gigabitEthernet0/0
+no shutdown
+exit
+interface gigabitEthernet0/0.10
+encapsulation dot1Q 10
+ip address 192.168.10.1 255.255.255.0
+exit
+interface gigabitEthernet0/0.20
+encapsulation dot1Q 20
+ip address 192.168.20.1 255.255.255.0
+end
