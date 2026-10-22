@@ -1,0 +1,70 @@
+import socket
+import sys
+HOST = '127.0.0.1'
+TCP_PORT = 12345
+UDP_PORT = 12346
+def run_tcp_server():
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.bind((HOST, TCP_PORT))
+server_socket.listen(1)
+print(f"\n[TCP] Server listening on {HOST}:{TCP_PORT}...")
+conn, addr = server_socket.accept()
+print(f"[TCP] Connected by client at {addr}")
+data = conn.recv(1024).decode()
+print(f"[TCP] Client says: {data}")
+conn.send("Message received loud and clear!".encode())
+conn.close()
+server_socket.close()
+print("[TCP] Server connection closed.")
+def run_tcp_client():
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+print(f"\n[TCP] Connecting to server at {HOST}:{TCP_PORT}...")
+client_socket.connect((HOST, TCP_PORT))
+message = "Hello, Server! This is the TCP Client."
+client_socket.send(message.encode())
+print(f"[TCP] Sent: {message}")
+response = client_socket.recv(1024).decode()
+print(f"[TCP] Server says: {response}")
+client_socket.close()
+print("[TCP] Client connection closed.")
+def run_udp_server():
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+server_socket.bind((HOST, UDP_PORT))
+print(f"\n[UDP] Server listening on {HOST}:{UDP_PORT}...")
+data, addr = server_socket.recvfrom(1024)
+print(f"[UDP] Received from {addr}: {data.decode()}")
+server_socket.sendto("Got your UDP packet!".encode(), addr)
+
+server_socket.close()
+print("[UDP] Server socket closed.")
+def run_udp_client():
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+server_address = (HOST, UDP_PORT)
+message = "Hello, Server! This is the UDP Client."
+client_socket.sendto(message.encode(), server_address)
+print(f"\n[UDP] Sent packet to {server_address}")
+data, server = client_socket.recvfrom(1024)
+print(f"[UDP] Server says: {data.decode()}")
+client_socket.close()
+print("[UDP] Client socket closed.")
+if __name__ == "__main__":
+print("=== Computer Networks Lab: Experiment 7 ===")
+print("1. Run TCP Server")
+print("2. Run TCP Client")
+print("3. Run UDP Server")
+print("4. Run UDP Client")
+print("5. Exit")
+choice = input("\nEnter your choice (1-5): ")
+if choice == '1':
+run_tcp_server()
+elif choice == '2':
+run_tcp_client()
+elif choice == '3':
+run_udp_server()
+elif choice == '4':
+run_udp_client()
+elif choice == '5':
+print("Exiting...")
+sys.exit(0)
+else:
+print("Invalid choice. Please run the script again and select 1-5.")
